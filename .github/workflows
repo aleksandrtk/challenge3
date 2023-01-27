@@ -1,0 +1,25 @@
+name: Pipeline
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Python environment
+      uses: actions/setup-python@v4
+    - name: Run script
+      run: |
+        python hello.py
+  
+  build:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+    - uses actions/checkout@v3
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v3
+      with:
+        name: my-artifact
+        path: hello.py
