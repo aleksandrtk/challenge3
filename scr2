@@ -1,0 +1,25 @@
+# Путь к основному каталогу с приложениями
+app_dir_base="/c/Users/n/Documents"
+
+# Создаем CSV файл и записываем заголовки
+echo "Directory,Release,Tag" > release-tags-all.csv
+
+while IFS= read -r dir; do
+    for release in dev test mo main; do
+        # Полный путь к каталогу приложения
+        app_dir="$app_dir_base/$dir"
+        
+        cd "$app_dir" || exit
+        if [ "$release" == "main" ]; then
+            release_name="prod"
+            git checkout "$release" && git pull --rebase
+        else
+            release_name="$release"
+            git checkout "release-$release" && git pull --rebase
+        fi
+        # Ищем теги в файле values.yaml
+        tags=$(grep docker-appimag values.yaml | grep m)
+        # Записываем результаты в CSV файл
+        echo "$dir,$release_name,$tags" >> release-tags-all.csv
+    done
+done < apps_jenkins.txt || exit 1
