@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+while IFS= read -r dir; do
+    echo "== Processing directory: $dir"
+    echo "$dir" >> ../release-tags-all.txt
+
+    for release in dev test m m; do
+        cd "/c/Users/n/Documents/$dir" || exit
+        if [ "$release" == "main" ]; then
+            echo "prod" >> ../release-tags-all.txt
+            git checkout "$release" && git pull --rebase
+        else
+            echo "$release" >> ../release-tags-all.txt
+            git checkout "release-$release" && git pull --rebase
+        fi
+        grep docker-appimag values.yaml | grep p >> ../release-tags-all.txt
+    done
+
+    cd ..
+    echo >> ../release-tags-all.txt
+    sleep 1
+done < apps_jenkins.txt || exit 1
