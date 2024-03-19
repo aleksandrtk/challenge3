@@ -21,3 +21,17 @@ while IFS= read -r dir; do
     echo >> ../release-tags-all.txt
     sleep 1
 done < apps_jenkins.txt || exit 1
+# Release Tags Generation Script
+
+This Bash script automates the process of generating release tags for applications located in a specified directory. It creates a CSV file named `release-tags-all.csv` containing the directory name, release name, and corresponding tags.
+
+## Prerequisites
+- Bash shell environment
+- Git installed and configured
+- Values.yaml files containing tag information for each application
+
+## Usage
+1. Modify the script to set the correct path to the main directory (`app_dir_base`) and the list of applications (`apps_jenkins.txt`).
+2. Ensure that your values.yaml files are properly structured and contain the necessary tag information.
+3. Run the script by executing `./generate_release_tags.sh`.
+4. Check the generated `release-tags-all.csv` file for the release tags.
