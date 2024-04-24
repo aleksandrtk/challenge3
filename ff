@@ -1,0 +1,28 @@
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+
+public class RabbitConnectionCheck {
+
+    public static void main(String[] args) {
+        String host = "your_rabbitmq_host";
+        int port = 5671; // Default SSL port for RabbitMQ
+        String username = "your_username";
+        String password = "your_password";
+
+        try {
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setHost(host);
+            factory.setPort(port);
+            factory.setUsername(username);
+            factory.setPassword(password);
+            factory.useSslProtocol(); // Enable SSL
+
+            Connection connection = factory.newConnection();
+            System.out.println("Successfully connected to RabbitMQ host: " + host);
+            connection.close();
+        } catch (Exception e) {
+            System.out.println("Failed to connect to RabbitMQ host: " + host);
+            e.printStackTrace();
+        }
+    }
+}
