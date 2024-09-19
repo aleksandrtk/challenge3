@@ -26,3 +26,29 @@ public class RabbitConnectionCheck {
         }
     }
 }
+
+
+#!/bin/bash
+
+# Check if tess.txt exists
+if [[ ! -f tess.txt ]]; then
+    echo "File tess.txt not found!"
+    exit 1
+fi
+
+# Set IFS to newline to handle directory paths with spaces
+IFS=$'\n'
+
+# Read each line from tess.txt and perform git pull
+while read -r repo; do
+    if [[ -d "$repo" ]]; then
+        echo "Pulling updates for $repo..."
+        cd "$repo" || { echo "Failed to cd into $repo"; exit 1; }
+        git pull || { echo "Failed to pull from $repo"; exit 1; }
+        cd - > /dev/null # Return to previous directory
+    else
+        echo "Directory $repo not found, skipping..."
+    fi
+done < tess.txt
+
+echo "All repositories pulled successfully."
