@@ -52,3 +52,38 @@ while read -r repo; do
 done < tess.txt
 
 echo "All repositories pulled successfully."
+
+
+
+
+
+
+
+
+#!/bin/bash
+
+# Define namespaces to check
+namespaces=("t-dev-nm" "t-test-nm" "t-prod-nm")
+
+# Output file to store affected pods
+output_file="affected_pods.txt"
+
+# Clear the output file if it exists
+> "$output_file"
+
+# Iterate over each namespace
+for namespace in "${namespaces[@]}"; do
+    echo "Checking namespace: $namespace"
+    
+    # Get pods in the current namespace and check for missing limits in the first container
+    affected_pods=$(kubectl get pods -n "$namespace" -o json | jq -r '.items[] | .metadata.name as $pod | .spec.containers[0] | select(.resources.limits == null) | $pod')
+    
+    # If there are affected pods, write them to the file
+    if [ -n "$affected_pods" ]; then
+        echo "Namespace: $namespace" >> "$output_file"
+        echo "$affected_pods" >> "$output_file"
+        echo "---" >> "$output_file"
+    fi
+done
+
+echo "Script finished. Affected pods are listed in $output_file"
