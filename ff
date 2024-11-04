@@ -87,3 +87,23 @@ for namespace in "${namespaces[@]}"; do
 done
 
 echo "Script finished. Affected pods are listed in $output_file"
+
+
+
+
+{{/* Derive the cluster this is running in. Used for Certificate, Ingress, OktaApplication */}}
+{{- define "application.cluster" -}}
+{{- if eq .Values.global.labels.environment "prod" }}
+  {{- if eq .Values.global.labels.cluster "ext" }}
+    {{- default "us-pd.ekspd-ext.aws.net" | trunc 63 | trimSuffix "-" }}
+  {{- else }}
+    {{- default "us-pd.ekspd.aws.net" | trunc 63 | trimSuffix "-" }}
+  {{- end }}
+{{- else }}
+  {{- if eq .Values.global.labels.cluster "ext" }}
+    {{- default "us-np.eksnp-ext.aws.net" | trunc 63 | trimSuffix "-" }}
+  {{- else }}
+    {{- default "us-np.eksnp.aws.net" | trunc 63 | trimSuffix "-" }}
+  {{- end }}
+{{- end }}
+{{- end }}
